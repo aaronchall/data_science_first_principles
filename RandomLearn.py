@@ -20,8 +20,8 @@ class RandomLearn:
         accuracy :: float <- accuracy of the weights for predicting the labels
         prior :: float <- probability of classification as true based on the label average
         prior_accuracy :: float <- accuracy prediction based on the prior
-        param_len :: int <- number of parameter fields
-        inputs :: [[int]] <- matrix of input parameters
+        feature_len :: int <- number of features
+        inputs :: [[int]] <- matrix of input features
         labels :: [[int]] <- labels vector
         iterations :: int <- number of cycles before arriving at final weights
     """
@@ -37,13 +37,13 @@ class RandomLearn:
         """split the data into inputs and labels"""
         
         # Count the input parameters by subtracting the labels column from the fields
-        self.param_len = self.data.shape[1] - 1
+        self.feature_len = self.data.shape[1] - 1
 
         # Transpose the input fields and store
-        self.inputs = self.data[:,:self.param_len].T
+        self.inputs = self.data[:,:self.feature_len].T
 
         # Transpose the labels field and store
-        self.labels = self.data[:,self.param_len:].T
+        self.labels = self.data[:,self.feature_len:].T
 
         # Calculate the prior
         self.prior = np.average(self.labels)
@@ -52,7 +52,7 @@ class RandomLearn:
         self.prior_accuracy = np.around(max(self.prior,1 - self.prior),decimals=2)
 
         # Initialize weights to zero
-        self.w = np.zeros((1,self.param_len))
+        self.w = np.zeros((1,self.feature_len))
 
     def train(self):
         """randomly test weights over the number of trials"""
@@ -61,7 +61,7 @@ class RandomLearn:
         for i in range(self.trials):
 
             # Randomly assign test weights (limited to two decimal places)
-            t_w = np.around(np.random.uniform(0,1,self.param_len),decimals=2)
+            t_w = np.around(np.random.uniform(0,1,self.feature_len),decimals=2)
 
             # Get the predictions made by the test weights
             preds = (np.dot(t_w,self.inputs) > .5)
